@@ -26,13 +26,23 @@ const config: Config = {
         colors: {
           background: "rgb(14, 14, 14)",
           foreground: "#FFFFFF",
-          content1: "#3B3B3B",
+          content1: "#1E2827",
           primary: {
             "50": "#FFFFFF",
             "100": "#FFFFFF",
             DEFAULT: "#000000",
             foreground: "#000000",
           },
+        },
+      },
+      mythemeLit: {
+        // custom theme
+        extend: "light",
+        colors: {
+          background: "#FBFBFB",
+          foreground: "#141414",
+          content1: "#1E2827",
+          content2: "rgba(20, 20, 20, 0.5)",
         },
       },
   },

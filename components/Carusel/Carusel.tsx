@@ -2,24 +2,23 @@
 import { Image } from "@nextui-org/react";
 import { Component } from "react";
 import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-
-const createCarouselItemImage = (index: number, options = {}) => (
+const createCarouselItemImage = (path: string, index: number) => (
     <div key={index}>
-        <Image src={`/watch${index}.png`} alt={"lot" + index} />
+        <Image src={path} alt={"lot" + index} />
     </div>
 );
 
-const baseChildren = <div>{[1, 2, 3, 4, 5].map(createCarouselItemImage)}</div>;
 
-
-export class ExternalControlledCarousel extends Component<{}, { currentSlide: number; autoPlay: boolean }> {
+export class ExternalControlledCarousel extends Component<{slideList: string[]}, { currentSlide: number; autoPlay: boolean; slideList: string[] }> {
     constructor(props: any) {
         super(props);
 
         this.state = {
             currentSlide: 0,
-            autoPlay: true,
+            autoPlay: false,
+            slideList: props.slideList,
         };
     }
 
@@ -35,12 +34,6 @@ export class ExternalControlledCarousel extends Component<{}, { currentSlide: nu
         }));
     };
 
-    changeAutoPlay = () => {
-        this.setState((state) => ({
-            autoPlay: !state.autoPlay,
-        }));
-    };
-
     updateCurrentSlide = (index: number) => {
         const { currentSlide } = this.state;
 
@@ -52,30 +45,36 @@ export class ExternalControlledCarousel extends Component<{}, { currentSlide: nu
     };
 
     render() {
-        const buttonStyle = { fontSize: 20, padding: '5px 20px', margin: '5px 0px' };
-        const containerStyle = { margin: '5px 0 20px' };
+        const containerStyle = { margin: '5px 0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'};
+        const baseChildren = <div>{this.state.slideList.map(createCarouselItemImage)}</div>;
         return (
             <div>
-                <div style={containerStyle}>
-                    <p>External slide value: {this.state.currentSlide}</p>
-                    <button onClick={this.prev} style={buttonStyle}>
-                        Prev
-                    </button>
-                    <button onClick={this.next} style={buttonStyle}>
-                        Next
-                    </button>
-                    <button onClick={this.changeAutoPlay} style={buttonStyle}>
-                        Toggle Autoplay ({this.state.autoPlay ? 'true' : 'false'})
-                    </button>
+                <div className="bg-content1">
+                    <Carousel
+                        showThumbs={false}
+                        showArrows={false}
+                        showStatus={false}
+                        showIndicators={false}
+                        autoPlay={this.state.autoPlay}
+                        infiniteLoop={true}
+                        selectedItem={this.state.currentSlide}
+                        onChange={this.updateCurrentSlide}
+                        {...this.props}
+                    >
+                        {baseChildren.props.children}
+                    </Carousel>
                 </div>
-                <Carousel
-                    autoPlay={this.state.autoPlay}
-                    selectedItem={this.state.currentSlide}
-                    onChange={this.updateCurrentSlide}
-                    {...this.props}
-                >
-                    {baseChildren.props.children}
-                </Carousel>
+                <div style={containerStyle}>
+                    <div>
+                        <button onClick={this.prev} >
+                            <Image src="/left_arrow.svg" alt="Prev"></Image>
+                        </button>
+                        <button onClick={this.next} >
+                            <Image src="/right_arrow.svg" alt="Next"></Image>
+                        </button>
+                    </div>
+                    <p>{`${this.state.currentSlide + 1}`.padStart(2, '0')} ---- {`${this.state.slideList.length}`.padStart(2, '0')}</p>
+                </div>
             </div>
         );
     }
